@@ -1,5 +1,5 @@
 sessionInfo()
-packages <- c("dplyr", "tidyr", "lubridate", "ggplot2", "lattice", "grid", "gridExtra", "scales")
+packages <- c("dplyr", "tidyr")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
