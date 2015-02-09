@@ -1,37 +1,31 @@
-source("loadData.R")
-source("plot2.R")
-source("plot3.R")
+library(dplyr)
+library(ggplot2)
 
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
 
-# Plot 4
+dataNEI <- tbl_df(NEI)
+dataSCC <- tbl_df(SCC)
 
-getPlot4_1 <- function(gdata) {
-  p <- ggplot(data=gdata, aes(x=mydate, y=Voltage)) + geom_line()
-  p <- p + theme_bw() +  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-  p <- p + xlab("datetime") + ylab("Voltage")
-  p <- p + scale_x_datetime(breaks = date_breaks("1 day"), labels=timeD_formatter)    
+CombCoal <- dataSCC %>% 
+  filter(grepl('Combustion', SCC.Level.One), grepl('Coal', SCC.Level.Four)) %>%           
+  print
+dataNEICombCoal <- dataNEI %>%
+  filter(SCC %in% CombCoal$SCC) %>%
+  print
+
+# Plot 1
+getPlot1 <- function(gdata) {
+  p <- p <- ggplot(gdata,aes(factor(year),Emissions/10^5,fill=type)) +
+    geom_bar(stat="identity") +
+    theme_bw() + guides(fill=FALSE)+
+    facet_grid(.~type,scales = "free",space="free") + 
+    labs(x="year", y=expression("Total PM"[2.5]*" Emission (Tons)")) + 
+    labs(title=expression("PM"[2.5]*" Coal Combustion Source Emissions Across US from 1999-2008"))
 }
 
-getPlot4_2 <- function(gdata) {
-  p <- ggplot(data=gdata, aes(x=mydate, y=Global_reactive_power)) + geom_line()
-  p <- p + theme_bw() +  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-  p <- p + xlab("datetime") + ylab("Global_reactive_power")
-  p <- p + scale_x_datetime(breaks = date_breaks("1 day"), labels=timeD_formatter)    
-}
-
-
-getPlot4 <- function(gdata) {
-  p2 = getPlot2(gdata)
-  p3 = getPlot3(gdata)
-  p4_1 = getPlot4_1(gdata)
-  p4_2 = getPlot4_2(gdata)    
-  grid.arrange(p2, p4_1, p3, p4_2, ncol = 2)
-}
-
-
-png("plot4.png", height=480, width=480)
-getPlot4(PCdata)
+png("figure/plot4.png", )
+print(getPlot1(dataNEICombCoal))
 dev.off()
-
 
 cat(" ALL DONE")
