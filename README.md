@@ -97,6 +97,7 @@ First we'll aggregate the total PM2.5 emission from all sources for each of the 
 Using the base plotting system, now we plot the total PM2.5 Emission from all sources,
 
 ```r
+library("dplyr")
 dataNEI <- tbl_df(NEI)
 plot1 <- dataNEI %>% 
           group_by(year)%>%
@@ -110,20 +111,16 @@ barplot(
   ylab="PM2.5 Emissions (10^6 Tons)",
   main="Total PM2.5 Emissions From All US Sources"
 )
-```
 
-#```r
-#aggTotals <- aggregate(Emissions ~ year,NEI, sum)
-#```
-# ```r
-# barplot(
-#   (aggTotals$Emissions)/10^6,
-#   names.arg=aggTotals$year,
-#   xlab="Year",
-#   ylab="PM2.5 Emissions (10^6 Tons)",
-#   main="Total PM2.5 Emissions From All US Sources"
-# )
-# ```
+aggTotals <- aggregate(Emissions ~ year,NEI, sum)
+barplot(
+  (aggTotals$Emissions)/10^6,
+  names.arg=aggTotals$year,
+  xlab="Year",
+  ylab="PM2.5 Emissions (10^6 Tons)",
+  main="Total PM2.5 Emissions From All US Sources"
+)
+```
 
 ![plot of chunk plot1](figure/plot1.png) 
 
@@ -225,10 +222,7 @@ dataNEICombCoal %>%
           group_by(year) %>%
           summarise(Emissions = sum(Emissions)/10^5) %>%
           print
-```r
-
-# 
-# ```r
+          
 # # Subset coal combustion related NEI data
 # combustionRelated <- grepl("comb", SCC$SCC.Level.One, ignore.case=TRUE)
 # coalRelated <- grepl("coal", SCC$SCC.Level.Four, ignore.case=TRUE) 
@@ -246,9 +240,9 @@ dataNEICombCoal %>%
 #   labs(x="year", y=expression("Total PM"[2.5]*" Emission (10^5 Tons)")) + 
 #   labs(title=expression("PM"[2.5]*" Coal Combustion Source Emissions Across US from 1999-2008"))
 # 
-# print(ggp)
-# ```
+# print(ggp)          
 
+```
 ![plot of chunk plot4](figure/plot4.png) 
 
 **Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?**
